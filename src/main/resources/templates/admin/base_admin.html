@@ -790,7 +790,9 @@
         return;
       }
 
-      CKEDITOR.replace(id, options || {});
+      CKEDITOR.replace(id, Object.assign({
+        versionCheck: false
+      }, options || {}));
     }
 
     initCkEditor('description');
