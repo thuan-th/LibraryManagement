@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::layout(~{::section})}">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<body>
+
+<section>
+
+    <section class="hero-section position-relative padding-large"
+             style="background-image: url(/images/banner-image-bg-1.jpg);
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    height: 250px;
+                    padding-top: 75px;
+                    padding-bottom: 50px;">
+
+        <div class="hero-content">
+            <div class="container">
+                <div class="row">
+                    <div class="text-center">
+                        <h2>Liên Hệ</h2>
+                        <div class="breadcrumbs">
+                            <span class="item">
+                                <a href="/">Trang chủ > </a>
+                            </span>
+                            <span class="item text-decoration-underline">Giới thiệu</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+
+        <div class="card dashboard-box mb-4">
+            <div class="card-body">
+                <div class="text-center mb-3"><img th:src="@{/images/main-logo.png}" class="logo"></div>
+<!--                <h4 class="fw-bold mb-3 text-center">Về Bookly</h4>-->
+                <p>
+                    <strong>Bookly</strong> là nền tảng bán sách trực tuyến hiện đại, mang đến cho bạn trải nghiệm
+                    mua sắm sách nhanh chóng, tiện lợi và đáng tin cậy.
+                </p>
+                <p>
+                    Chúng tôi cung cấp hàng nghìn đầu sách thuộc nhiều thể loại như:
+                    kỹ năng sống, kinh doanh, văn học, thiếu nhi và học thuật.
+                </p>
+                <p>
+                    Với hệ thống thông minh và giao diện thân thiện, Bookly giúp bạn
+                    dễ dàng tìm kiếm, đánh giá và lựa chọn những cuốn sách phù hợp nhất.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-4">
+                <div class="card dashboard-box h-100">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-book-open fa-2x mb-3 text-primary"></i>
+                        <h5 class="fw-bold">Kho sách đa dạng</h5>
+                        <p>
+                            Hơn 20+ đầu sách từ nhiều thể loại khác nhau,
+                            cập nhật liên tục mỗi ngày.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card dashboard-box h-100">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-truck-fast fa-2x mb-3 text-success"></i>
+                        <h5 class="fw-bold">Giao hàng nhanh</h5>
+                        <p>
+                            Hỗ trợ giao hàng toàn quốc với thời gian nhanh chóng
+                            và đảm bảo an toàn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card dashboard-box h-100">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-shield-halved fa-2x mb-3 text-danger"></i>
+                        <h5 class="fw-bold">Uy tín & bảo mật</h5>
+                        <p>
+                            Cam kết bảo mật thông tin khách hàng và mang đến
+                            trải nghiệm mua sắm an toàn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-box mb-4">
+            <div class="card-body">
+                <h4 class="fw-bold mb-4">Thông tin liên hệ</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <p><i class="fa-solid fa-location-dot me-2 text-primary"></i>
+                            <strong>Địa chỉ:</strong> 123 Trần Phú, Hà Đông, Hà Nội
+                        </p>
+                        <p><i class="fa-solid fa-phone me-2 text-success"></i>
+                            <strong>Hotline:</strong> 0123 456 789
+                        </p>
+                        <p><i class="fa-solid fa-envelope me-2 text-danger"></i>
+                            <strong>Email:</strong> bookly@gmail.com
+                        </p>
+                        <p><i class="fa-solid fa-clock me-2 text-warning"></i>
+                            <strong>Giờ làm việc:</strong> 08:00 - 18:00 (Thứ 2 - Thứ 7)
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Kết nối với chúng tôi</h6>
+                        <p>
+                            <i class="fa-brands fa-facebook me-2" style="color: #4267B2"></i>
+                            Facebook: fb.com/bookly
+                        </p>
+
+                        <p>
+                            <i class="fa-brands fa-instagram me-2 text-danger"></i>
+                            Instagram: @bookly
+                        </p>
+
+                        <p>
+                            <i class="fa-solid fa-globe me-2 text-success"></i>
+                            Website: www.bookly.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-box">
+            <div class="card-body">
+                <h4 class="fw-bold mb-3">Vị trí của chúng tôi</h4>
+                <iframe
+                        src="https://maps.google.com/maps?q=ha%20dong%20hanoi&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        width="100%"
+                        height="350"
+                        style="border:0; border-radius:10px;"
+                        allowfullscreen=""
+                        loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </section>
+</section>
+
+</body>
+</html>

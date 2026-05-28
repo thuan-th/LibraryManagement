@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đánh Giá Sản Phẩm</title>
+</head>
+
+<body>
+	<section>
+		<div class="container mt-5" style="width: 80%;">
+			<th:block th:if="${session.succMsg}">
+				<p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
+				<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+
+			<th:block th:if="${session.errorMsg}">
+				<p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
+				<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+			</th:block>
+			<h3>Đánh Giá Sản Phẩm: <span th:text="${book.bookName}"></span></h3>
+
+			<div class="card my-4">
+				<div class="card-body">
+					<form id="rating-form" th:action="@{/user/review/save}" method="post">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						<input type="hidden" name="bookId" th:value="${book.id}" />
+						<div class="mb-3">
+							<label for="score" class="form-label">Lựa chọn đánh giá</label>
+							<div class="custom-rating">
+								<span class="custom-star" data-score="1">&#9733;</span>
+								<span class="custom-star" data-score="2">&#9733;</span>
+								<span class="custom-star" data-score="3">&#9733;</span>
+								<span class="custom-star" data-score="4">&#9733;</span>
+								<span class="custom-star" data-score="5">&#9733;</span>
+							</div>
+							<input type="hidden" id="score" name="score">
+						</div>
+						<div class="mb-3">
+							<label for="review" class="form-label">Đánh giá của bạn</label>
+							<textarea id="review" class="form-control" name="review" rows="3" required></textarea>
+						</div>
+						<div style="text-align: right;">
+							<button type="submit" class="btn btn-primary">Gửi</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="card my-4">
+				<div class="card-body">
+					<h5 class="card-title">Đánh giá sản phẩm</h5>
+					<h3 th:text="${averageRating} + '/5'">Chưa có đánh giá</h3>
+				</div>
+			</div>
+
+			<div class="card my-4">
+				<div class="card-body">
+					<h5 class="card-title" style="padding-bottom: 20px;">Danh Sách Đánh Giá</h5>
+					<ul id="rating-list" class="list-group">
+						<li class="list-group-item" th:each="rating : ${ratings}" >
+
+							<span th:if="${rating.user.profileImage != null and rating.user.profileImage != '' and rating.user.profileImage != 'default.jpg'}">
+								<img th:src="@{'/uploads/users/' + ${rating.user.profileImage}}"
+									 alt="User Avatar" class="rounded-circle" width="40" height="40" style="vertical-align: middle;">
+									 <strong th:text="${rating.user.name}" style="display: inline-flex; align-items: center; margin-left: 8px; vertical-align: middle;"></strong>
+							</span>
+
+							<span th:unless="${rating.user.profileImage != null and rating.user.profileImage != '' and rating.user.profileImage != 'default.jpg'}"
+								  style="display: inline-flex; align-items: center;">
+								<i class="fa-solid fa-user" style="font-size: 35px;
+									padding-top: 6px;
+									width: 40px;
+									height: 40px;
+									border-radius: 50%;
+									background-color: #ccc;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									color: white;"></i>
+									<strong th:text="${rating.user.name}" style="display: inline-flex; align-items: center; margin-left: 8px; vertical-align: middle;"></strong>
+							</span>
+							<div class="custom-rating-stars">
+								<span class="custom-star"
+									th:class="${rating.score >= 1 ? 'highlightedhh' : ''}">&#9733;</span>
+								<span class="custom-star"
+									th:class="${rating.score >= 2 ? 'highlightedhh' : ''}">&#9733;</span>
+								<span class="custom-star"
+									th:class="${rating.score >= 3 ? 'highlightedhh' : ''}">&#9733;</span>
+								<span class="custom-star"
+									th:class="${rating.score >= 4 ? 'highlightedhh' : ''}">&#9733;</span>
+								<span class="custom-star"
+									th:class="${rating.score >= 5 ? 'highlightedhh' : ''}">&#9733;</span>
+							</div>
+							<p th:text="${rating.review}" style="							
+							   border: 1px solid #ddd;
+							   padding: 10px;
+							   border-radius: 5px;
+							   margin-top: 5px;
+							   background-color: #f9f9f9;
+							   font-size: 1rem;
+							   color: #333;">
+							</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- Bootstrap JS và Popper.js -->
+</body>
+</html>

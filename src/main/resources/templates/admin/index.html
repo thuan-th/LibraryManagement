@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en"
+	  xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{admin/base_admin::layout(~{::section})}" xmlns="http://www.w3.org/1999/html">
+
+<body>
+<section>
+	<style>
+		.dashboard-chart-grid {
+			display: grid;
+			grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+			gap: 24px;
+			margin-bottom: 32px;
+		}
+
+		.dashboard-panel {
+			background: #fff;
+			border: 1px solid #e9ecef;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+		}
+
+		.dashboard-panel-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 16px;
+			padding: 18px 20px;
+			border-bottom: 1px solid #eef0f3;
+		}
+
+		.dashboard-panel-title {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 700;
+			color: #1f2937;
+		}
+
+		.dashboard-panel-subtitle {
+			margin: 4px 0 0;
+			font-size: 13px;
+			color: #6b7280;
+		}
+
+		.dashboard-panel-body {
+			padding: 20px;
+		}
+
+		.dashboard-chart-box {
+			position: relative;
+			height: 340px;
+		}
+
+		.dashboard-chart-box.is-compact {
+			height: 300px;
+		}
+
+		.dashboard-filter-panel .form-label {
+			font-size: 13px;
+			font-weight: 700;
+			color: #374151;
+		}
+
+		.dashboard-filter-panel .form-control,
+		.dashboard-filter-panel .form-select {
+			border-radius: 6px;
+			min-height: 42px;
+		}
+
+		.dashboard-filter-actions {
+			display: grid;
+			gap: 12px;
+		}
+
+		@media (max-width: 991px) {
+			.dashboard-chart-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.dashboard-chart-box,
+			.dashboard-chart-box.is-compact {
+				height: 300px;
+			}
+		}
+	</style>
+	<section class="hero-section position-relative padding-large"
+			 style="background-image: url(/images/banner-image-bg-1.jpg);background-size: cover;background-repeat: no-repeat;background-position: center;height: 250px;padding-top: 75px;padding-bottom: 50px;">
+		<div class="hero-content">
+			<div class="container">
+				<div class="row">
+					<div class="text-center">
+						<h2>Dashboard</h2>
+						<div class="breadcrumbs">
+							<span class="item text-decoration-underline">Tổng quan hệ thống</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="container py-4">
+		<div class="row g-4 mb-4">
+			<div class="col-md-3 padding-small">
+				<div class="dashboard-card">
+					<div>
+						<p class="card-title fw-bold">
+							<i class="fa-solid fa-book me-2 text-warning"></i> Sách
+						</p>
+						<h3 th:text="${totalBooks}">0</h3>
+					</div>
+					<a href="/admin/books" class="btn-dashboard">Xem chi tiết →</a>
+				</div>
+			</div>
+
+			<div class="col-md-3 padding-small">
+				<div class="dashboard-card">
+					<div>
+						<p class="card-title fw-bold">
+							<i class="fa-solid fa-cart-shopping me-2 text-primary"></i> Tổng đơn hàng
+						</p>
+						<h3 th:text="${totalOrders}">0</h3>
+					</div>
+					<a href="/admin/orders" class="btn-dashboard">Xem chi tiết →</a>
+				</div>
+			</div>
+
+			<div class="col-md-3 padding-small">
+				<div class="dashboard-card">
+					<div>
+						<p class="card-title fw-bold">
+							<i class="fa-solid fa-users me-2 text-success"></i> Người dùng
+						</p>
+						<h3 th:text="${totalUsers}">0</h3>
+					</div>
+					<a href="/admin/users?type=1" class="btn-dashboard">Xem chi tiết →</a>
+				</div>
+			</div>
+
+			<div class="col-md-3 padding-small">
+				<div class="dashboard-card">
+					<div>
+						<p class="card-title fw-bold">
+							<i class="fa-solid fa-money-bill-wave me-2 text-danger"></i> Doanh thu
+						</p>
+						<h3 th:text="${#numbers.formatInteger(totalRevenue,0,'POINT')}">0</h3>
+					</div>
+					<a href="/admin/orders" class="btn-dashboard">Xem chi tiết →</a>
+				</div>
+			</div>
+
+		</div>
+		<div class="dashboard-chart-grid">
+			<div class="dashboard-panel">
+				<div class="dashboard-panel-header">
+					<div>
+						<h5 class="dashboard-panel-title">Doanh thu theo năm</h5>
+						<p class="dashboard-panel-subtitle">Tổng doanh thu từng tháng trong năm</p>
+					</div>
+
+					<input id="yearSelector"
+						   type="number"
+						   class="form-control year-input"
+						   style="width: 130px;">
+				</div>
+
+				<div class="dashboard-panel-body">
+					<div class="dashboard-chart-box">
+						<canvas id="revenueChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="dashboard-panel">
+				<div class="dashboard-panel-header">
+					<div>
+						<h5 class="dashboard-panel-title">Trạng thái đơn</h5>
+						<p class="dashboard-panel-subtitle">Phân bổ đơn hàng theo khoảng lọc</p>
+					</div>
+				</div>
+
+				<div class="dashboard-panel-body">
+					<div class="dashboard-chart-box is-compact">
+						<canvas id="orderStatusChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="dashboard-panel">
+				<div class="dashboard-panel-header">
+					<div>
+						<h5 class="dashboard-panel-title">Doanh thu theo ngày</h5>
+						<p class="dashboard-panel-subtitle">Theo dõi doanh thu từng ngày trong tháng</p>
+					</div>
+
+					<input id="monthSelector"
+						   class="form-control month-input"
+						   type="month"
+						   style="width: 170px;">
+				</div>
+
+				<div class="dashboard-panel-body">
+					<div class="dashboard-chart-box">
+						<canvas id="dailyRevenueChart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="dashboard-panel dashboard-filter-panel">
+				<div class="dashboard-panel-header">
+					<div>
+						<h5 class="dashboard-panel-title">Bộ lọc trạng thái</h5>
+						<p class="dashboard-panel-subtitle">Chọn khoảng thời gian để cập nhật biểu đồ</p>
+					</div>
+				</div>
+
+				<div class="dashboard-panel-body dashboard-filter-actions">
+					<div>
+						<label for="filterType" class="form-label">Loại thống kê</label>
+						<select id="filterType" class="form-select">
+							<option value="day">Ngày</option>
+							<option value="month" selected>Tháng</option>
+							<option value="year">Năm</option>
+						</select>
+					</div>
+
+					<div id="inputContainer">
+						<label id="inputLabel" class="form-label">Chọn ngày</label>
+						<div class="d-flex align-items-center gap-2">
+							<input type="date" id="startDate" class="form-control">
+							<span class="separator text-muted">-</span>
+							<input type="date" id="endDate" class="form-control">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</section>
+</section>
+</body>
+</html>

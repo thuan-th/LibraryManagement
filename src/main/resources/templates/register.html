@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<title>Đăng ký</title>
+	<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+<main class="auth-page auth-page-register">
+	<div class="container-fluid">
+		<div class="row no-gutters min-vh-100">
+			<div class="col-md-5 auth-visual-col d-none d-md-flex">
+				<img src="/images/login1.jpg" alt="Bookly register" class="auth-visual-img">
+				<div class="auth-visual-overlay"></div>
+				<div class="auth-visual-content">
+					<div class="auth-visual-kicker">Bookly</div>
+					<h2 class="auth-visual-title">Tạo tài khoản để lưu sách yêu thích và theo dõi đơn hàng.</h2>
+					<p class="auth-visual-text">
+						Thư viện nhỏ của bạn bắt đầu từ một tài khoản Bookly.
+					</p>
+				</div>
+			</div>
+
+			<div class="col-md-7 auth-form-col">
+				<div class="auth-panel auth-panel-wide">
+					<div class="brand-wrapper">
+						<a href="/">
+							<img src="/images/main-logo.png" alt="Bookly" class="logo">
+						</a>
+					</div>
+
+					<div class="auth-card register-wrapper">
+						<h1 class="login-title">Đăng ký</h1>
+						<p class="auth-subtitle">Điền thông tin để tạo tài khoản Bookly.</p>
+
+						<th:block th:if="${session.succMsg}">
+							<div class="alert alert-success">[[${session.succMsg}]]</div>
+							<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+						</th:block>
+
+						<th:block th:if="${session.errorMsg}">
+							<div class="alert alert-danger">[[${session.errorMsg}]]</div>
+							<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+						</th:block>
+
+						<form id="registerForm" enctype="multipart/form-data">
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label for="fullName">Họ và tên</label>
+									<input type="text"
+										   name="name"
+										   id="fullName"
+										   class="form-control"
+										   pattern="^[A-Za-zÀ-ỹ\s]+$"
+										   oninput="this.value = this.value.replace(/[^A-Za-zÀ-ỹ\s]/g, '')"
+										   placeholder="Nhập họ và tên"
+										   required>
+								</div>
+
+								<div class="form-group col-md-6">
+									<label for="phoneNumber">Số điện thoại</label>
+									<input type="text"
+										   name="mobileNumber"
+										   id="phoneNumber"
+										   class="form-control"
+										   pattern="[0-9]{10}"
+										   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+										   placeholder="Nhập số điện thoại"
+										   maxlength="10"
+										   required>
+								</div>
+							</div>
+
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label for="registerCity">Tỉnh/Thành phố</label>
+									<select name="city"
+											id="registerCity"
+											class="form-control vietnam-city-select"
+											data-ward-select-id="registerWard"
+											required>
+										<option value="">Chọn tỉnh/thành phố</option>
+									</select>
+								</div>
+
+								<div class="form-group col-md-6">
+									<label for="registerWard">Xã/Phường</label>
+									<select name="state"
+											id="registerWard"
+											class="form-control"
+											required
+											disabled>
+										<option value="">Chọn xã/phường</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label for="address">Địa chỉ</label>
+									<input type="text"
+										   name="address"
+										   id="address"
+										   class="form-control"
+										   placeholder="Nhập địa chỉ"
+										   required>
+								</div>
+
+								<div class="form-group col-md-6">
+									<label for="email">Email</label>
+									<input type="email"
+										   name="email"
+										   id="email"
+										   class="form-control"
+										   placeholder="email@example.com"
+										   required>
+								</div>
+							</div>
+
+							<div class="form-row">
+								<div class="form-group col-md-6">
+									<label for="password">Mật khẩu</label>
+									<input type="password"
+										   name="password"
+										   id="password"
+										   class="form-control"
+										   placeholder="Nhập mật khẩu"
+										   required>
+								</div>
+
+								<div class="form-group col-md-6">
+									<label for="confirmPassword">Nhập lại mật khẩu</label>
+									<input type="password"
+										   name="cpassword"
+										   id="confirmPassword"
+										   class="form-control"
+										   placeholder="Nhập lại mật khẩu"
+										   required>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="profileImage">Ảnh đại diện</label>
+								<input type="file"
+									   name="img"
+									   id="profileImage"
+									   class="form-control auth-file-input"
+									   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+								<img id="previewImg" class="auth-preview-img" alt="Ảnh đại diện xem trước">
+							</div>
+
+							<button name="login" id="login" type="submit" class="btn btn-block login-btn">
+								Đăng ký
+							</button>
+						</form>
+
+						<p class="register-wrapper-footer-text">
+							Bạn đã có tài khoản?
+							<a href="/signin">Đăng nhập ngay</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<div class="modal fade" id="otpModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content custom-modal p-4 text-center">
+			<h3 class="login-title">Nhập mã OTP gửi về email để kích hoạt tài khoản</h3>
+
+			<input type="text"
+				   id="otpInput"
+				   class="form-control mb-3"
+				   placeholder="Nhập mã OTP"
+				   maxlength="6"
+				   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+			<button type="button" class="btn btn-block login-btn" onclick="verifyOtp()">
+				Xác nhận
+			</button>
+
+			<button type="button"
+					id="resendRegisterOtpBtn"
+					class="btn btn-link mt-2"
+					onclick="resendRegisterOtp()">
+				Gửi lại mã OTP
+			</button>
+
+			<div id="registerOtpCountdown" class="text-muted small mt-1"></div>
+		</div>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="/js/vietnam-address-select.js"></script>
+<script>
+	let currentEmail = "";
+
+	let registerOtpTimer = null;
+
+	function startRegisterOtpCooldown(seconds = 60) {
+		const btn = document.getElementById("resendRegisterOtpBtn");
+		const countdown = document.getElementById("registerOtpCountdown");
+
+		if (!btn || !countdown) {
+			return;
+		}
+
+		clearInterval(registerOtpTimer);
+
+		let remaining = seconds;
+		btn.disabled = true;
+		countdown.textContent = `Bạn có thể gửi lại mã sau ${remaining}s`;
+
+		registerOtpTimer = setInterval(() => {
+			remaining--;
+
+			if (remaining <= 0) {
+				clearInterval(registerOtpTimer);
+				btn.disabled = false;
+				countdown.textContent = "";
+				return;
+			}
+
+			countdown.textContent = `Bạn có thể gửi lại mã sau ${remaining}s`;
+		}, 1000);
+	}
+
+	function openRegisterOtpModal() {
+		document.getElementById("otpInput").value = "";
+		$('#otpModal').modal('show');
+		startRegisterOtpCooldown(60);
+	}
+
+	function resendRegisterOtp() {
+		if (!currentEmail) {
+			alert("Không tìm thấy email đăng ký");
+			return;
+		}
+
+		fetch("/register/resend-otp", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...getCsrfHeaders()
+			},
+			body: JSON.stringify({
+				email: currentEmail
+			})
+		})
+		.then(res => res.json())
+		.then(data => {
+			if (data.success) {
+				alert(data.message || "Mã OTP mới đã được gửi");
+				document.getElementById("otpInput").value = "";
+				startRegisterOtpCooldown(60);
+			} else {
+				alert(data.message || "Không thể gửi lại OTP");
+			}
+		})
+		.catch((err) => {
+			console.error("RESEND OTP ERROR:", err);
+			alert("Không thể gửi lại OTP. Vui lòng thử lại.");
+		});
+	}
+
+	function getCsrfHeaders() {
+		const token = document.querySelector('meta[name="_csrf"]')?.getAttribute("content");
+		const header = document.querySelector('meta[name="_csrf_header"]')?.getAttribute("content");
+
+		if (!token || !header) {
+			return {};
+		}
+
+		return {
+			[header]: token
+		};
+	}
+
+	$('#phoneNumber').on('input', function () {
+		var phone = $(this).val();
+		if (phone.length === 10 && !/^\d{10}$/.test(phone)) {
+			alert('Số điện thoại không hợp lệ');
+			$(this).val('');
+		}
+	});
+
+	document.getElementById("registerForm").addEventListener("submit", function(e) {
+		e.preventDefault();
+
+		const password = document.getElementById("password").value;
+		const confirm = document.getElementById("confirmPassword").value;
+
+		if (password !== confirm) {
+			alert("Mật khẩu không khớp");
+			return;
+		}
+
+		const fileInput = document.getElementById("profileImage");
+		const file = fileInput.files[0];
+
+		if (file) {
+			const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+			const maxSize = 5 * 1024 * 1024;
+
+			if (!allowedTypes.includes(file.type)) {
+				alert("Ảnh đại diện chỉ hỗ trợ JPG, JPEG, PNG hoặc WEBP");
+				fileInput.value = "";
+				document.getElementById("previewImg").style.display = "none";
+				return;
+			}
+
+			if (file.size > maxSize) {
+				alert("Ảnh đại diện không được vượt quá 5MB");
+				fileInput.value = "";
+				document.getElementById("previewImg").style.display = "none";
+				return;
+			}
+		}
+
+		const formData = new FormData(this);
+		currentEmail = formData.get("email");
+
+		fetch("/register", {
+			method: "POST",
+			headers: getCsrfHeaders(),
+			body: formData
+		})
+		.then(res => res.json())
+		.then(data => {
+			console.log("REGISTER RESPONSE:", data);
+
+			if (data.success) {
+				openRegisterOtpModal();
+			} else {
+				alert(data.message);
+			}
+		})
+		.catch((err) => {
+			console.error("ERROR:", err);
+			alert("Lỗi server");
+		});
+	});
+
+	function verifyOtp() {
+		const otp = document.getElementById("otpInput").value;
+
+		if (!otp) {
+			alert("Vui lòng nhập OTP");
+			return;
+		}
+
+		fetch("/verify-otp", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...getCsrfHeaders()
+			},
+			body: JSON.stringify({
+				email: currentEmail,
+				otp: otp
+			})
+		})
+		.then(res => res.json())
+		.then(data => {
+			if (data.success) {
+				alert("Đăng ký thành công!");
+				window.location.href = "/signin";
+			} else {
+				alert(data.message || "OTP sai");
+			}
+		})
+		.catch(() => alert("Lỗi server"));
+	}
+
+	document.getElementById("profileImage").onchange = function(e) {
+		const file = e.target.files[0];
+		const img = document.getElementById("previewImg");
+
+		if (!file) {
+			img.style.display = "none";
+			return;
+		}
+
+		const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+		const maxSize = 5 * 1024 * 1024;
+
+		if (!allowedTypes.includes(file.type)) {
+			alert("Ảnh đại diện chỉ hỗ trợ JPG, JPEG, PNG hoặc WEBP");
+			e.target.value = "";
+			img.style.display = "none";
+			return;
+		}
+
+		if (file.size > maxSize) {
+			alert("Ảnh đại diện không được vượt quá 5MB");
+			e.target.value = "";
+			img.style.display = "none";
+			return;
+		}
+
+		const url = URL.createObjectURL(file);
+		img.src = url;
+		img.style.display = "block";
+	};
+</script>
+</body>
+
+</html>

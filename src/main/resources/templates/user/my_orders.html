@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${title}">View Book</title>
+</head>
+<body>
+	<section class="hero-section position-relative padding-large"
+			 style="background-image: url(/images/banner-image-bg-1.jpg);background-size: cover;background-repeat: no-repeat;background-position: center;height: 250px;padding-top: 75px;padding-bottom: 50px;">
+			<div class="hero-content">
+				<div class="container">
+					<div class="row">
+						<div class="text-center">
+							<h2>Chi tiết đơn hàng</h2>
+							<div class="breadcrumbs">
+								<span class="item">
+									<a href="/">Trang chủ > </a>
+								</span>
+								<span class="item text-decoration-underline">Chi tiết đơn hàng</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+	<section>
+		<div class="container mt-5 p-5">
+			<div class="row">
+				<th:block th:if="${session.succMsg}">
+					<p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
+					<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+				</th:block>
+
+				<th:block th:if="${session.errorMsg}">
+					<p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
+					<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+				</th:block>
+
+				<div class="col-md-12 ">
+					<table class="table table-bordered table-hover align-middle card-sh">
+						<thead>
+							<tr>
+								<th scope="col" class="text-center" style="font-weight: bold;">Mã vận đơn</th>
+								<th scope="col" class="text-center" style="font-weight: bold;">Thời gian đặt hàng</th>
+								<th scope="col" class="text-center" style="font-weight: bold;">Chi tiết sách</th>
+								<th scope="col" class="text-center" style="font-weight: bold;">Thành tiền</th>
+								<th scope="col" class="text-center" style="font-weight: bold;">Trạng thái</th>
+								<th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="o:${orders}">
+								<th scope="row">[[${o.orderId}]]</th>
+								<td>[[${#temporals.format(o.orderDate, 'dd/MM/yyyy HH:mm')}]]</td>
+								<td>
+								    <ul style="list-style-type: none; padding-left: 0;">
+								        <li th:each="item : ${o.items}">
+								            - [[${item.book.bookName}]]  x[[${item.quantity}]]
+								        </li>
+								    </ul>
+								</td>
+								<td>[[${#numbers.formatDecimal(o.totalAmount, 0, 'POINT', 0, 'COMMA')}]]đ</td>
+								<td>
+									<span class="badge" style="font-size: 17px;" th:classappend="
+										${o.status  == 'PENDING_PAYMENT'} ? 'bg-secondary' :
+										(${o.status == 'PROCESSING'} ? 'bg-warning' :
+										(${o.status == 'ORDER_RECEIVED'} ? 'bg-info' :
+										(${o.status == 'PRODUCT_PACKED'} ? 'bg-primary' :
+										(${o.status == 'OUT_FOR_DELIVERY'} ? 'bg-dark' :
+										(${o.status == 'DELIVERED'} ? 'bg-success' :
+										(${o.status == 'CANCELLED'} ? 'bg-danger' : 'bg-light'))))))">
+										[[${T(com.library.module.order.enums.OrderStatus).valueOf(o.status).getName()}]]
+									</span>
+								</td>
+								<td class="text-center user-order-actions">
+									<div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
+
+										<th:block th:if="${o.status == 'PENDING_PAYMENT' or o.status == 'PROCESSING'}">
+											<form th:action="@{/order/cancel}"
+												  method="post"
+												  class="m-0"
+												  onsubmit="return confirm('Xác nhận huỷ đơn hàng này?')">
+												<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+												<input type="hidden" name="id" th:value="${o.id}">
+
+												<button type="submit" class="btn btn-sm btn-danger user-order-action-btn">
+													<span>Huỷ đơn</span>
+												</button>
+											</form>
+										</th:block>
+
+										<th:block th:if="${o.status == 'CANCELLED'}">
+											<button type="button" class="btn btn-sm btn-dark user-order-action-btn" disabled>
+												<span>Đã huỷ</span>
+											</button>
+										</th:block>
+
+										<th:block th:if="${o.status != 'PENDING_PAYMENT'
+													   and o.status != 'PROCESSING'
+													   and o.status != 'CANCELLED'}">
+											<button type="button" class="btn btn-sm btn-secondary user-order-action-btn" disabled>
+												<span>Không thể huỷ</span>
+											</button>
+										</th:block>
+
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

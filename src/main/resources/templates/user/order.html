@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${title}">View Book</title>
+</head>
+<body>
+	<section class="hero-section position-relative padding-large"
+			 style="background-image: url(/images/banner-image-bg-1.jpg);background-size: cover;background-repeat: no-repeat;background-position: center;height: 250px;padding-top: 75px;padding-bottom: 50px;">
+		<div class="hero-content">
+			<div class="container">
+				<div class="row">
+					<div class="text-center">
+						<h2>Thông tin thanh toán</h2>
+						<div class="breadcrumbs">
+							<span class="item">
+								<a href="/">Trang chủ > </a>
+							</span>
+							<span class="item text-decoration-underline">Thông tin thanh toán</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="checkout-wrap padding-large">
+		<div class="container">
+			<form class="form-group" action="/order/place" method="post">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="row d-flex flex-wrap">
+					<div class="col-lg-6">
+						<h3 class="mb-3">Chi tiết thanh toán</h3>
+						<div class="billing-details">
+							<label for="lname" class="fw-bold">Họ <span class="text-danger">*</span></label>
+							<input type="text" id="lname" name="lastName" class="form-control mt-2 mb-2 ps-3" required>
+
+							<label for="fname" class="fw-bold">Tên <span class="text-danger">*</span></label>
+							<input type="text" id="fname" name="firstName" class="form-control mt-2 mb-2 ps-3" required>
+
+							<label for="city" class="fw-bold">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+							<select id="city" name="city" class="form-control mt-2 mb-2 ps-3" required>
+								<option value="">Chọn tỉnh/thành phố</option>
+							</select>
+
+							<label for="district" class="fw-bold">Xã/Phường <span class="text-danger">*</span></label>
+							<select id="district" name="district" class="form-control mt-2 ps-3 mb-2" required disabled>
+								<option value="">Chọn xã/phường</option>
+							</select>
+
+							<label for="address" class="fw-bold">Địa chi (số nhà) <span class="text-danger">*</span></label>
+							<input type="text" id="address" name="address" class="form-control mt-2 ps-3 mb-2" required>
+
+							<label for="phone" class="fw-bold">Số điện thoại <span class="text-danger">*</span></label>
+							<input type="tel" id="phone" name="mobileNo"
+								   pattern="^(0)[0-9]{9}$"
+								   inputmode="numeric"
+								   title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số"
+								   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+								   class="form-control mt-2 mb-2 ps-3" required>
+
+							<label for="email" class="fw-bold">Email <span class="text-danger">*</span></label>
+							<input type="email" id="email" name="email" class="form-control mt-2 mb-2 ps-3" required>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div>
+							<h3 class="mb-3">Ghi chú</h3>
+							<div class="billing-details">
+								<textarea name="note" class="form-control pt-3 pb-3 ps-3 mt-2"></textarea>
+							</div>
+						</div>
+
+						<div class="cart-totals padding-medium pb-0">
+							<h3 class="mb-3">Thanh toán</h3>
+							<div class="total-price pb-3">
+								<table cellspacing="0" class="table text-capitalize">
+									<tbody>
+										<tr class="subtotal pt-2 pb-2 border-top border-bottom">
+											<th>Giá sản phẩm</th>
+											<td data-title="Subtotal">
+												<span class="price-amount amount text-primary ps-5 fw-light">
+													<bdi>
+														<span th:text="${#numbers.formatDecimal(orderPrice, 0, 'POINT', 0, 'COMMA')} + 'đ'"></span>
+													</bdi>
+												</span>
+											</td>
+										</tr>
+										<tr class="subtotal pt-2 pb-2 border-top border-bottom">
+											<th>Phí vận chuyển</th>
+											<td data-title="Subtotal">
+												<span class="price-amount amount text-primary ps-5 fw-light">
+													<bdi>
+														<span th:text="${#numbers.formatDecimal(20000, 0, 'POINT', 0, 'COMMA')} + 'đ'"></span>
+													</bdi>
+												</span>
+											</td>
+										</tr>
+										<tr class="order-total pt-2 pb-2 border-bottom">
+											<th>Tổng thanh toán</th>
+											<td data-title="Total">
+												<span class="price-amount amount text-primary ps-5 fw-light">
+													<bdi>
+														<span th:text="${#numbers.formatDecimal(totalOrderPrice, 0, 'POINT', 0, 'COMMA')} + 'đ'"></span>
+													</bdi>
+												</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div class="list-group">
+								<label class="list-group-item d-flex gap-2 border-0">
+									<input class="form-check-input flex-shrink-0" type="radio" 
+										 name="paymentType" value="vnpay" required>
+									<span>
+										<p class="mb-1">Thanh toán qua ví VNPay</p>
+									</span>
+								</label>
+								<label class="list-group-item d-flex gap-2 border-0">
+									<input class="form-check-input flex-shrink-0" type="radio" 
+										name="paymentType" value="COD" required>
+									<span>
+										<p class="mb-1">Thanh toán khi nhận hàng</p>
+									</span>
+								</label>
+							</div>
+
+							<div class="button-wrap mt-3">
+								<button type="submit" name="submit" class="btn">Đặt hàng</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<script th:src="@{/js/vietnam-address-select.js}"></script>
+		</div>
+	</section>
+</body>
+</html>

@@ -1,0 +1,38 @@
+package com.library.module.order.repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import com.library.module.order.entity.BookOrder;
+
+public interface BookOrderRepository extends JpaRepository<BookOrder, Integer> {
+
+    List<BookOrder> findByUserId(Integer userId);
+
+    List<BookOrder> findByUserIdOrderByOrderDateDesc(Integer userId);
+
+    @Query("SELECT MONTH(bo.orderDate) AS month, SUM(bo.totalAmount) AS revenue " +
+            "FROM BookOrder bo " +
+            "WHERE YEAR(bo.orderDate) = :year " +
+            "AND bo.status <> 'CANCELLED' " +
+            "AND bo.paymentStatus = 'PAID' " +
+            "GROUP BY MONTH(bo.orderDate) " +
+            "ORDER BY MONTH(bo.orderDate)")
+    List<Object[]> getMonthlyRevenue(@Param("year") int year);
+
+    @Query("SELECT b FROM BookOrder b " +
+            "WHERE YEAR(b.orderDate) = :year " +
+            "AND MONTH(b.orderDate) = :month " +
+            "AND b.status <> 'CANCELLED' " +
+            "AND b.paymentStatus = 'PAID'")
+    List<BookOrder> findOrdersByMonthAndYear(@Param("year") int year, @Param("month") int month);
+
+    @Query("SELECT b.status, COUNT(b) FROM BookOrder b WHERE b.orderDate BETWEEN :startDate AND :endDate GROUP BY b.status")
+    List<Object[]> countOrdersByStatusAndDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    
+    BookOrder findByOrderId(@Param("ch") String orderId);
+}
