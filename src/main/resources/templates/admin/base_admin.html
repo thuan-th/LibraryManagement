@@ -708,6 +708,7 @@
     const bookName = document.querySelector('input[name="bookName"]');
     const author = document.querySelector('input[name="author"]');
     const price = document.querySelector('input[name="price"]');
+    const priceDisplay = document.querySelector('input[name="priceDisplay"]');
     const discount = document.querySelector('input[name="discount"]');
     const stock = document.querySelector('input[name="stock"]');
     const file = document.querySelector('input[name="file"]');
@@ -732,7 +733,9 @@
 
     if (isNaN(priceVal) || priceVal <= 0) {
       alert("Giá phải lớn hơn 0");
-      price.focus();
+      if (priceDisplay) {
+        priceDisplay.focus();
+      }
       return false;
     }
 
@@ -774,6 +777,64 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/charts.js"></script>
+
+<script>
+  function normalizePriceValue(value) {
+    if (!value) {
+      return "";
+    }
+
+    return value.toString().replace(/[^\d]/g, "");
+  }
+
+  function formatPriceValue(value) {
+    const digits = normalizePriceValue(value);
+
+    if (!digits) {
+      return "";
+    }
+
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  function syncPriceInput(input) {
+    const form = input.closest("form");
+    const hiddenInput = form ? form.querySelector(".js-price-hidden") : null;
+
+    const rawValue = normalizePriceValue(input.value);
+
+    input.value = formatPriceValue(rawValue);
+
+    if (hiddenInput) {
+      hiddenInput.value = rawValue;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".js-price-input").forEach(function (input) {
+      syncPriceInput(input);
+
+      input.addEventListener("input", function () {
+        syncPriceInput(input);
+      });
+
+      input.addEventListener("blur", function () {
+        syncPriceInput(input);
+      });
+    });
+
+    document.querySelectorAll("form").forEach(function (form) {
+      form.addEventListener("submit", function () {
+        const priceInput = form.querySelector(".js-price-input");
+
+        if (priceInput) {
+          syncPriceInput(priceInput);
+        }
+      });
+    });
+  });
+</script>
+
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 
 <script th:inline="javascript">

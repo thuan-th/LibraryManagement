@@ -89,7 +89,17 @@
 								<div class="row">
 									<div class="mb-3 col-md-4">
 										<label class="fw-bold">Giá niêm yết <span class="text-danger">*</span></label>
-										<input type="number" name="price" th:value="${book.price}" class="form-control">
+										<input type="text"
+											   name="priceDisplay"
+											   class="form-control js-price-input"
+											   inputmode="numeric"
+											   autocomplete="off"
+											   th:value="${#numbers.formatInteger(book.price, 0, 'POINT')}">
+
+										<input type="hidden"
+											   name="price"
+											   class="js-price-hidden"
+											   th:value="${book.price}">
 									</div>
 									<div class="mb-3 col-md-4">
 										<label class="fw-bold">Giảm giá (%) <span class="text-danger">*</span></label>

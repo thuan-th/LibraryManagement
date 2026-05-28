@@ -74,7 +74,14 @@
 								<div class="row">
 									<div class="col-md-4 mb-3">
 										<label class="fw-bold">Giá niêm yết <span class="text-danger">*</span></label>
-										<input type="number" name="price" class="form-control" min="1" required>
+										<input type="text"
+											   name="priceDisplay"
+											   class="form-control js-price-input"
+											   inputmode="numeric"
+											   autocomplete="off"
+											   required>
+
+										<input type="hidden" name="price" class="js-price-hidden">
 									</div>
 
 									<div class="col-md-4 mb-3">
