@@ -3,349 +3,433 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title th:text="${title}">View Book</title>
+	<title th:text="${book != null ? book.bookName : 'Chi tiết sách'}">Chi tiết sách</title>
 </head>
 
 <body>
-	<section class="hero-section position-relative padding-large"
-			 style="background-image: url(/images/banner-image-bg-1.jpg);background-size: cover;background-repeat: no-repeat;background-position: center;height: 250px;padding-top: 75px;padding-bottom: 50px;">
-		<div class="hero-content">
-			<div class="container">
-				<div class="row">
-					<div class="text-center">
-						<h2>Chi tiết sách</h2>
-						<div class="breadcrumbs">
-							<span class="item">
-								<a href="/">Trang chủ > </a>
-							</span>
-							<span class="item text-decoration-underline">Chi tiết sách</span>
-						</div>
+<section class="hero-section position-relative padding-large"
+		 style="background-image: url(/images/banner-image-bg-1.jpg);background-size: cover;background-repeat: no-repeat;background-position: center;height: 250px;padding-top: 75px;padding-bottom: 50px;">
+	<div class="hero-content">
+		<div class="container">
+			<div class="row">
+				<div class="text-center">
+					<h2>Chi tiết sách</h2>
+					<div class="breadcrumbs">
+						<span class="item">
+							<a th:href="@{/}">Trang chủ > </a>
+						</span>
+						<span class="item">
+							<a th:href="@{/books}">Gian hàng sách > </a>
+						</span>
+						<span class="item text-decoration-underline">Chi tiết sách</span>
 					</div>
 				</div>
 			</div>
 		</div>
-	</section>
+	</div>
+</section>
 
-	<section class="single-product" style="padding: 4rem 0rem 1rem 0rem">
-		<div class="container">
-			<div class="row">
-				<th:block th:if="${session.succMsg}">
-					<p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
-					<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
-				</th:block>
+<section class="book-detail-page">
+	<div class="container">
 
-				<th:block th:if="${session.errorMsg}">
-					<p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
-					<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
-				</th:block>
-				<div class="col-lg-6">
-					<div class="d-flex justify-content-center">
-						<div class="swiper large-swiper border rounded-3 overflow-hidden d-flex align-items-center justify-content-center"
-							 style="height: 420px; width: 80%; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-							<div class="swiper-wrapper">
-								<div class="swiper-slide d-flex align-items-center justify-content-center">
-									<img th:src="@{${book.image != null && book.image.startsWith('http') ? book.image : '/uploads/books/' + book.image}}"
-										 alt="book"
-										 style="max-height: 100%; max-width: 100%; object-fit: contain;"
-										 class="img-fluid product-img">
-								</div>
+		<th:block th:if="${session.succMsg}">
+			<p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
+			<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+		</th:block>
+
+		<th:block th:if="${session.errorMsg}">
+			<p class="text-danger alert alert-danger text-center" role="alert">[[${session.errorMsg}]]</p>
+			<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+		</th:block>
+
+		<div class="row g-5 align-items-start">
+			<div class="col-lg-6">
+				<div class="book-detail-gallery">
+					<div class="swiper large-swiper book-detail-image-frame">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide book-detail-image-slide">
+								<img th:src="@{${#strings.isEmpty(book.image) ? '/images/default-image.jpg' : (book.image.startsWith('http') ? book.image : '/uploads/books/' + book.image)}}"
+									 th:alt="${book.bookName}"
+									 class="book-detail-image product-img">
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<div class="product-info ps-lg-5 pt-3 pt-lg-0">
-						<div class="element-header">
-							<h1 class="product-title">[[${book.bookName}]]</h1>
-							<div class="product-price d-flex align-items-center mt-2">
-								<span class="fs-2 fw-light text-primary me-2">[[${book.discountPrice}]]đ</span>
-								<del>[[${book.price}]]đ</del>
-							</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="book-detail-info">
+					<div class="book-detail-header">
+						<span class="book-detail-badge"
+							  th:if="${book.discount != null and book.discount > 0}">
+							-[[${book.discount}]]%
+						</span>
+
+						<h1 class="book-detail-title" th:text="${book.bookName}">
+							Tên sách
+						</h1>
+
+						<div class="book-detail-rating-row">
 							<div class="rating-container" th:attr="data-rating=${book.averageRating}">
 								<div class="rating">
-									<span class="rating-unit "><i class="fa-solid fa-star"
-											style="font-size: 15px;"></i></span>
-									<span class="rating-unit "><i class="fa-solid fa-star"
-											style="font-size: 15px;"></i></span>
-									<span class="rating-unit "><i class="fa-solid fa-star"
-											style="font-size: 15px;"></i></span>
-									<span class="rating-unit "><i class="fa-solid fa-star"
-											style="font-size: 15px;"></i></span>
-									<span class="rating-unit "><i class="fa-solid fa-star"
-											style="font-size: 15px;"></i></span>
+									<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+									<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+									<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+									<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+									<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
 								</div>
 							</div>
+
+							<span class="book-detail-sold">
+								Đã bán: [[${book.sold}]]
+							</span>
 						</div>
-						<p style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
-							<span>Tác giả: [[${book.author}]].</span>
-							<span style="margin-left: auto;">Đã bán: [[${book.sold}]]</span>
-						</p>
-						<hr>
-						<div class="cart-wrap">
-							<div class="product-quantity my-3">
-								<div class="item-title">
-									<l>Chọn số lượng:</l>
-								</div>
-								<div class="stock-button-wrap mt-2 d-flex flex-wrap align-items-center">
-									<div class="product-quantity">
-										<div class="input-group product-qty align-items-center"
-											style="max-width: 150px;">
-											<span class="input-group-btn">
-												<button type="button"
-													class="bg-white shadow border rounded-3 fw-light quantity-left-minus"
-													data-type="minus" data-field="">
-													<i class="fa-solid fa-minus"></i>
-												</button>
-											</span>
-											<input type="text" id="quantity" name="quantity"
-												class="form-control bg-white shadow border rounded-3 py-2 mx-2 input-number text-center"
-												value="1"
-												min="1"
-											   	th:attr="max=${book.stock}"
-											   	required>
-											<span class="input-group-btn">
-												<button type="button"
-													class="bg-white shadow border rounded-3 fw-light quantity-right-plus"
-													data-type="plus" data-field="">
-													<i class="fa-solid fa-plus"></i>
-												</button>
-											</span>
-										</div>
+
+						<div class="book-detail-price">
+							<span class="book-detail-current-price"
+								  th:text="${book.discountPrice != null ? #numbers.formatDecimal(book.discountPrice, 0, 'POINT', 0, 'COMMA') + 'đ' : '0đ'}">
+								0đ
+							</span>
+
+							<del class="book-detail-original-price"
+								 th:if="${book.price != null and book.discountPrice != null and book.price > book.discountPrice}"
+								 th:text="${#numbers.formatDecimal(book.price, 0, 'POINT', 0, 'COMMA')} + 'đ'">
+								0đ
+							</del>
+						</div>
+					</div>
+
+					<div class="book-detail-meta">
+						<div class="book-detail-meta-item">
+							<span>Tác giả</span>
+							<strong th:text="${book.author}">Tác giả</strong>
+						</div>
+
+						<div class="book-detail-meta-item">
+							<span>Danh mục</span>
+							<a th:href="@{/books(category=${book.category})}" th:text="${book.category}">
+								Danh mục
+							</a>
+						</div>
+
+						<div class="book-detail-meta-item">
+							<span>Nhà xuất bản</span>
+							<a th:href="@{/books(publisher=${book.publisher})}" th:text="${book.publisher}">
+								Nhà xuất bản
+							</a>
+						</div>
+
+						<div class="book-detail-meta-item">
+							<span>Kho</span>
+							<strong th:text="${book.stock}">0</strong>
+						</div>
+					</div>
+
+					<div class="book-detail-purchase">
+						<th:block th:if="${book.isActive == true}">
+							<th:block th:if="${book.stock != null and book.stock > 0}">
+								<div class="book-detail-quantity">
+									<label for="quantity">Chọn số lượng</label>
+
+									<div class="product-qty book-detail-qty-control">
+										<button type="button"
+												class="quantity-left-minus book-detail-qty-btn"
+												data-type="minus"
+												aria-label="Giảm số lượng">
+											<i class="fa-solid fa-minus"></i>
+										</button>
+
+										<input type="text"
+											   id="quantity"
+											   name="quantity"
+											   class="form-control input-number book-detail-quantity-input"
+											   value="1"
+											   min="1"
+											   th:attr="max=${book.stock}"
+											   inputmode="numeric"
+											   required>
+
+										<button type="button"
+												class="quantity-right-plus book-detail-qty-btn"
+												data-type="plus"
+												aria-label="Tăng số lượng">
+											<i class="fa-solid fa-plus"></i>
+										</button>
 									</div>
 								</div>
-							</div>
-							<div class="action-buttons my-3 d-flex flex-wrap gap-3">
-								<th:block th:if="${book.isActive == true}">
-									<th:block th:if="${book.stock>0}">
-										<th:block th:if="${user==null}">
-											<a href="/signin" class="btn btn-dark">Thêm giỏ hàng</a>
-										</th:block>
-										<th:block th:unless="${user==null}">
-											<button class="btn btn-dark add-to-cart-btn" th:data-id="${book.id}">
-												Thêm giỏ hàng
-											</button>
-										</th:block>
+
+								<div class="book-detail-actions">
+									<th:block th:if="${user == null}">
+										<a th:href="@{/signin}" class="btn btn-dark book-detail-cart-btn">
+											Thêm giỏ hàng
+										</a>
 									</th:block>
-									<th:block th:unless="${book.stock>0}">
-										<a href="#" class="btn btn-dark">Sách tạm hết</a>
+
+									<th:block th:unless="${user == null}">
+										<button type="button"
+												class="btn btn-dark book-detail-cart-btn add-to-cart-btn"
+												th:data-id="${book.id}">
+											Thêm giỏ hàng
+										</button>
 									</th:block>
-									<th:block th:if="${user==null}">
-										<a href="/signin" class="btn btn-dark">
+
+									<th:block th:if="${user == null}">
+										<a th:href="@{/signin}"
+										   class="btn btn-dark book-detail-icon-btn"
+										   title="Thêm vào yêu thích">
 											<svg class="heart" width="21" height="21">
 												<use xlink:href="#heart"></use>
 											</svg>
 										</a>
 									</th:block>
-									<th:block th:unless="${user==null}">
-										<form th:action="@{/user/wishlist/add}" method="post" class="d-inline">
-											<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-											<input type="hidden" name="pid" th:value="${book.id}" />
 
-											<button type="submit" class="btn btn-dark">
+									<th:block th:unless="${user == null}">
+										<form th:action="@{/user/wishlist/add}" method="post" class="d-inline">
+											<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+											<input type="hidden" name="pid" th:value="${book.id}">
+
+											<button type="submit"
+													class="btn btn-dark book-detail-icon-btn"
+													title="Thêm vào yêu thích">
 												<svg class="heart" width="21" height="21">
 													<use xlink:href="#heart"></use>
 												</svg>
 											</button>
 										</form>
 									</th:block>
-									<a th:href="@{/review/{id}(id=${book.id})}" class="btn btn-dark">
-										Đánh giá sách
+
+									<a th:href="@{/review/{id}(id=${book.id})}"
+									   class="btn btn-outline-dark book-detail-review-btn">
+										Đánh giá sách
 									</a>
-								</th:block>
-							</div>
-						</div>
-						<hr>
-						<div class="meta-product my-3">
-							<div class="meta-item d-flex mb-1">
-								<span class="fw-medium me-2">Số lượng: </span>
-								<ul class="select-list list-unstyled d-flex mb-0">
-									<li data-value="S" class="select-item">[[${book.stock}]]</li>
-								</ul>
-							</div>
-							<div class="meta-item d-flex mb-1">
-								<span class="fw-medium me-2">Danh mục:</span>
-								<ul class="select-list list-unstyled d-flex mb-0">
-									<li data-value="S" class="select-item">
-										<a href="#">[[${book.category}]]</a>
-									</li>
+								</div>
+							</th:block>
 
-								</ul>
-							</div>
-							<div class="meta-item d-flex mb-1">
-								<span class="fw-medium me-2">Nhà xuất bản:</span>
-								<ul class="select-list list-unstyled d-flex mb-0">
-									<li data-value="S" class="select-item">
-										<a href="#">[[${book.publisher}]]</a>
-									</li>
-								</ul>
-							</div>
+							<th:block th:unless="${book.stock != null and book.stock > 0}">
+								<div class="book-detail-out-of-stock">
+									<i class="fa-solid fa-circle-exclamation"></i>
+									Sách tạm hết hàng
+								</div>
+							</th:block>
+						</th:block>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="product-tabs book-detail-tabs">
+	<div class="container">
+		<div class="row">
+			<div class="tabs-listing">
+				<nav>
+					<div class="nav nav-tabs d-flex justify-content-center py-3"
+						 id="nav-tab"
+						 role="tablist">
+						<button class="nav-link text-capitalize active"
+								id="nav-home-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-home"
+								type="button"
+								role="tab"
+								aria-controls="nav-home"
+								aria-selected="true">
+							Description
+						</button>
+
+						<button class="nav-link text-capitalize"
+								id="nav-shipping-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#nav-shipping"
+								type="button"
+								role="tab"
+								aria-controls="nav-shipping"
+								aria-selected="false">
+							Shipping &amp; Return
+						</button>
+					</div>
+				</nav>
+
+				<div class="tab-content border-bottom py-4"
+					 id="nav-tabContent">
+					<div class="tab-pane fade active show"
+						 id="nav-home"
+						 role="tabpanel"
+						 aria-labelledby="nav-home-tab">
+						<div th:utext="${@blogHtmlSanitizer.sanitize(book.description)}"
+							 class="description-text book-description-content"></div>
+					</div>
+
+					<div class="tab-pane fade"
+						 id="nav-shipping"
+						 role="tabpanel"
+						 aria-labelledby="nav-shipping-tab">
+						<div class="book-shipping-return-content">
+							<h4>Chính sách giao hàng</h4>
+							<p>
+								Bookly hỗ trợ giao hàng toàn quốc. Thời gian giao hàng phụ thuộc vào địa chỉ nhận hàng
+								và đơn vị vận chuyển.
+							</p>
+
+							<h4>Chính sách đổi trả</h4>
+							<p>
+								Sản phẩm có thể được hỗ trợ đổi trả nếu bị lỗi, hư hỏng trong quá trình vận chuyển
+								hoặc giao sai sản phẩm so với đơn hàng.
+							</p>
+
+							<h4>Lưu ý</h4>
+							<p>
+								Vui lòng kiểm tra sản phẩm khi nhận hàng và liên hệ Bookly nếu cần hỗ trợ thêm.
+							</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</section>
-	
-	<section class="product-tabs">
-		<div class="container">
-			<div class="row">
-				<div class="tabs-listing">
-					<nav>
-						<div class="nav nav-tabs d-flex justify-content-center py-3" id="nav-tab" role="tablist">
-							<button class="nav-link text-capitalize active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Description</button>
-							<button class="nav-link text-capitalize" id="nav-shipping-tab" data-bs-toggle="tab" data-bs-target="#nav-shipping" type="button" role="tab" aria-controls="nav-shipping" aria-selected="false">Shipping & Return</button>
-						</div>
-					</nav>
-					<div class="tab-content border-bottom py-4" id="nav-tabContent">
-						<div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-							<div th:text="${book.description}" class="description-text"></div>
-						</div>
-					</div>
-				</div>
-			</div>
+	</div>
+</section>
+
+<section id="similar-books"
+		 class="book-detail-similar-section position-relative"
+		 th:if="${similarBooks != null and !similarBooks.isEmpty()}">
+	<div class="container">
+		<div class="book-detail-section-header d-md-flex justify-content-between align-items-center">
+			<h3>Sách tương tự</h3>
+			<a th:href="@{/books(category=${book.category})}" class="btn">Xem thêm</a>
 		</div>
-	</section>
-	<section id="similar-books" class="position-relative padding-large"
-			 th:if="${similarBooks != null and !similarBooks.isEmpty()}"
-			 style="padding-top: 50px; padding-bottom: 50px;">
-		<div class="container">
-			<div class="section-title d-md-flex justify-content-between align-items-center mb-4">
-				<h3 class="d-flex align-items-center">Sách tương tự</h3>
-				<a th:href="@{'/books?category=' + ${book.category}}" class="btn">Xem thêm</a>
-			</div>
 
-			<div class="position-absolute top-50 end-0 pe-0 pe-xxl-5 me-0 me-xxl-5 swiper-next product-slider-button-next">
-				<svg class="chevron-forward-circle d-flex justify-content-center align-items-center p-2"
-					 width="80" height="80">
-					<use xlink:href="#alt-arrow-right-outline"></use>
-				</svg>
-			</div>
+		<div class="position-absolute top-50 end-0 pe-0 pe-xxl-5 me-0 me-xxl-5 swiper-next product-slider-button-next">
+			<svg class="chevron-forward-circle d-flex justify-content-center align-items-center p-2"
+				 width="80"
+				 height="80">
+				<use xlink:href="#alt-arrow-right-outline"></use>
+			</svg>
+		</div>
 
-			<div class="position-absolute top-50 start-0 ps-0 ps-xxl-5 ms-0 ms-xxl-5 swiper-prev product-slider-button-prev">
-				<svg class="chevron-back-circle d-flex justify-content-center align-items-center p-2"
-					 width="80" height="80">
-					<use xlink:href="#alt-arrow-left-outline"></use>
-				</svg>
-			</div>
+		<div class="position-absolute top-50 start-0 ps-0 ps-xxl-5 ms-0 ms-xxl-5 swiper-prev product-slider-button-prev">
+			<svg class="chevron-back-circle d-flex justify-content-center align-items-center p-2"
+				 width="80"
+				 height="80">
+				<use xlink:href="#alt-arrow-left-outline"></use>
+			</svg>
+		</div>
 
-			<div class="swiper product-swiper overflow-hidden">
-				<div class="swiper-wrapper">
-					<div class="swiper-slide" th:each="p : ${similarBooks}">
-						<div class="card position-relative p-4 border rounded-3 h-100 flex-column">
-							<div class="position-absolute" th:if="${p.discount != null and p.discount > 0}">
-								<p class="bg-primary py-1 px-3 fs-6 text-white rounded-2">
-									-[[${p.discount}]]%
-								</p>
-							</div>
+		<div class="swiper product-swiper overflow-hidden">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" th:each="p : ${similarBooks}">
+					<article class="book-detail-similar-card">
+						<a th:href="@{/book/{id}(id=${p.id})}" class="book-detail-similar-image-wrap">
+							<span class="book-detail-similar-discount"
+								  th:if="${p.discount != null and p.discount > 0}">
+								-[[${p.discount}]]%
+							</span>
 
-							<a th:href="@{'/book/' + ${p.id}}">
-								<img loading="lazy"
-									 th:src="@{${#strings.isEmpty(p.image) ? '/images/default-image.jpg' : (p.image.startsWith('http') ? p.image : '/uploads/books/' + p.image)}}"
-									 class="img-fluid shadow-sm"
-									 alt="similar book"
-									 style="height: 185px; width: 100%; object-fit: contain;">
+							<img loading="lazy"
+								 th:src="@{${#strings.isEmpty(p.image) ? '/images/default-image.jpg' : (p.image.startsWith('http') ? p.image : '/uploads/books/' + p.image)}}"
+								 th:alt="${p.bookName}"
+								 class="book-detail-similar-image">
+						</a>
 
+						<div class="book-detail-similar-body">
+							<h4>
+								<a th:href="@{/book/{id}(id=${p.id})}" th:text="${p.bookName}">
+									Tên sách
+								</a>
+							</h4>
 
-								<h6 class="mt-4 mb-0 fw-bold"
-									style="display: inline-block; width: 185px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-									[[${p.bookName}]]
-								</h6>
-							</a>
+							<p class="book-detail-similar-author" th:text="${p.author}">
+								Tác giả
+							</p>
 
-							<div class="review-content d-flex">
-								<p class="my-2 me-2 fs-6 text-black-50"
-								   style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-									[[${p.author}]]
-								</p>
-							</div>
-
-							<div class="review-content d-flex">
+							<div class="book-detail-similar-rating">
 								<div class="rating-container" th:attr="data-rating=${p.averageRating}">
 									<div class="rating">
-                                    <span class="rating-unit">
-                                        <i class="fa-solid fa-star" style="font-size: 15px;"></i>
-                                    </span>
-										<span class="rating-unit">
-                                        <i class="fa-solid fa-star" style="font-size: 15px;"></i>
-                                    </span>
-										<span class="rating-unit">
-                                        <i class="fa-solid fa-star" style="font-size: 15px;"></i>
-                                    </span>
-										<span class="rating-unit">
-                                        <i class="fa-solid fa-star" style="font-size: 15px;"></i>
-                                    </span>
-										<span class="rating-unit">
-                                        <i class="fa-solid fa-star" style="font-size: 15px;"></i>
-                                    </span>
+										<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+										<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+										<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+										<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
+										<span class="rating-unit"><i class="fa-solid fa-star"></i></span>
 									</div>
 								</div>
 							</div>
 
-							<div class="review-content d-flex">
-								<p class="my-2 me-2 fs-6 text-black-50">Đã bán: [[${p.sold}]]</p>
-							</div>
+							<p class="book-detail-similar-sold">
+								Đã bán: [[${p.sold}]]
+							</p>
 
-							<div style="padding-top: 10px;">
-                            <span class="price text-primary fw-bold mb-2 fs-5">
-                                [[${p.discountPrice}]]
-                            </span>
-								<del class="fs-6" style="padding-left: 5px;">
-									[[${p.price}]]
+							<div class="book-detail-similar-price">
+								<span th:text="${p.discountPrice != null ? #numbers.formatDecimal(p.discountPrice, 0, 'POINT', 0, 'COMMA') + 'đ' : '0đ'}">
+									0đ
+								</span>
+								<del th:if="${p.price != null and p.discountPrice != null and p.price > p.discountPrice}"
+									 th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} + 'đ'">
+									0đ
 								</del>
 							</div>
 						</div>
-					</div>
+					</article>
 				</div>
 			</div>
 		</div>
-	</section>
-	<section class="comments-section padding-small">
-		<div class="container">
-			<h3 class="mb-4">Bình luận</h3>
+	</div>
+</section>
 
-			<ul class="list-unstyled">
-				<li th:each="comment : ${comments}">
-					<div class="card mb-3 shadow-sm">
-						<div class="card-body">
-							<div>
-								<span class="card-title fs-4 mb-1" th:text="${comment.user.name}">User</span>
-								<span>-</span>
-								<span class="card-text fs-6 mb-1">
-									<small th:text="${#temporals.format(comment.commentDate, 'dd/MM/yyyy')}">Date</small>
-								</span>
-							</div>
-							<p class="card-text fs-5" th:text="${comment.content}" style="margin-top: 5px;">Comment content</p>
-						</div>
-					</div>
-				</li>
-			</ul>
-
-			<div class="mt-4">
-				<h4 class="mb-3">Thêm bình luận</h4>
-
-				<th:block th:if="${user == null}">
-					<a href="/signin" class="btn btn-dark">Đăng nhập để bình luận</a>
-				</th:block>
-
-				<th:block th:unless="${user == null}">
-					<form th:action="@{/user/book/{bookId}/comment(bookId=${book.id})}" method="post">
-						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-						<div class="form-group mb-3">
-							<textarea class="form-control"
-									  name="content"
-									  rows="3"
-									  placeholder="Nhập bình luận của bạn"
-									  required>
-
-							</textarea>
-						</div>
-						<button class="btn btn-primary" type="submit">Gửi</button>
-					</form>
-				</th:block>
-			</div>
+<section class="book-detail-comments-section">
+	<div class="container">
+		<div class="book-detail-section-header">
+			<h3>Bình luận</h3>
 		</div>
-	</section>
+
+		<div class="book-detail-comments-list">
+			<th:block th:if="${comments != null and !comments.isEmpty()}">
+				<article class="book-detail-comment" th:each="comment : ${comments}">
+					<div class="book-detail-comment-header">
+						<strong th:text="${comment.user.name}">User</strong>
+						<span th:text="${#temporals.format(comment.commentDate, 'dd/MM/yyyy')}">
+							01/01/2026
+						</span>
+					</div>
+
+					<p th:text="${comment.content}">
+						Nội dung bình luận
+					</p>
+				</article>
+			</th:block>
+
+			<th:block th:unless="${comments != null and !comments.isEmpty()}">
+				<div class="book-detail-empty-comment">
+					Chưa có bình luận nào cho sách này.
+				</div>
+			</th:block>
+		</div>
+
+		<div class="book-detail-comment-form">
+			<h4>Thêm bình luận</h4>
+
+			<th:block th:if="${user == null}">
+				<a th:href="@{/signin}" class="btn btn-dark">Đăng nhập để bình luận</a>
+			</th:block>
+
+			<th:block th:unless="${user == null}">
+				<form th:action="@{/user/book/{bookId}/comment(bookId=${book.id})}" method="post">
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+					<textarea class="form-control"
+							  name="content"
+							  rows="4"
+							  maxlength="1000"
+							  placeholder="Nhập bình luận của bạn"
+							  required></textarea>
+
+					<button class="btn btn-primary mt-3" type="submit">
+						Gửi bình luận
+					</button>
+				</form>
+			</th:block>
+		</div>
+	</div>
+</section>
 </body>
 
 </html>

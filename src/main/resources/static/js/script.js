@@ -378,7 +378,7 @@
           }
 
           // update quantity
-          let qtyEl = btn.parentElement.querySelector(".quantity-text");
+          let qtyEl = row ? row.querySelector(".quantity-text") : btn.parentElement.querySelector(".quantity-text");
           if (qtyEl) qtyEl.innerText = data.quantity;
 
           // update item total
@@ -396,10 +396,9 @@
 
           // update cart total
           let cartTotal = document.getElementById("cart-total-price");
-          if (cartTotal) cartTotal.innerText = data.cartTotal.toLocaleString("vi-VN");
-
+          if (cartTotal) cartTotal.innerText = formatCurrency(data.cartTotal);
         } else {
-          console.error(data.message);
+          showToast(data.message || "Có lỗi xảy ra", false);
         }
       })
       .catch(err => console.error(err));

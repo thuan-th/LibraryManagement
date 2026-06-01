@@ -153,4 +153,25 @@ public class CartController {
         res.put("count", count);
         return res;
     }
+
+    @PostMapping("/remove")
+    public String removeCartItem(@RequestParam Integer itemId,
+                                 Principal p,
+                                 HttpSession session) {
+        try {
+            if (p == null) {
+                return "redirect:/signin";
+            }
+
+            User user = getUser(p);
+
+            cartService.removeItem(itemId, user.getId());
+
+            session.setAttribute("succMsg", "Đã xoá sản phẩm khỏi giỏ hàng");
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", e.getMessage());
+        }
+
+        return "redirect:/user/cart";
+    }
 }

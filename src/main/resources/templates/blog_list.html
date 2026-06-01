@@ -15,9 +15,9 @@
 				<div class="text-center">
 					<h1>Blog</h1>
 					<div class="breadcrumbs">
-                        <span class="item">
-                            <a href="/">Trang chủ > </a>
-                        </span>
+						<span class="item">
+							<a th:href="@{/}">Trang chủ > </a>
+						</span>
 						<span class="item text-decoration-underline">Blog</span>
 					</div>
 				</div>
@@ -26,63 +26,121 @@
 	</div>
 </section>
 
-<section>
-	<div class="shopify-grid padding-medium">
-		<div class="container">
-			<div class="row flex-row-reverse g-md-5">
-				<main class="col-md-9">
-					<div class="filter-shop d-flex flex-wrap justify-content-between align-items-center mb-5">
-						<div class="showing-product">
-							<p class="mb-0" th:if="${totalElements != null}">
-								Hiển thị [[${postsSize}]] của [[${totalElements}]] bài viết
-							</p>
+<section class="blog-list-page padding-medium">
+	<div class="container">
+		<div class="row g-4 align-items-start">
+			<aside class="col-lg-3">
+				<div class="blog-sidebar">
+					<div class="blog-side-banner">
+						<img src="/images/banner-row.jpg"
+							 alt="Blog banner"
+							 loading="lazy">
+					</div>
+				</div>
+			</aside>
+
+			<main class="col-lg-9">
+				<div class="blog-list-toolbar">
+					<div class="blog-toolbar-info">
+						<p class="blog-result-count mb-0" th:if="${totalElements != null}">
+							Hiển thị <strong>[[${postsSize}]]</strong> bài viết
+						</p>
+
+						<div class="blog-active-filters" th:if="${!#strings.isEmpty(ch)}">
+							<a th:href="@{/blog_list(pageNo=0, pageSize=${pageSize})}"
+							   class="blog-filter-chip">
+								Từ khóa: [[${ch}]] <span>x</span>
+							</a>
 						</div>
 					</div>
 
-					<div class="row product-content product-store">
-						<th:block th:if="${posts != null and !posts.isEmpty()}">
-							<div class="col-lg-4 col-md-6 mb-4" th:each="post : ${posts}">
-								<div class="card book-product-card blog-product-card position-relative p-4 border rounded-3">
-									<a th:href="@{'/blog_list/' + ${post.id}}" class="blog-product-link">
-										<div class="blog-post-label position-absolute">
-											<p class="bg-primary py-1 px-3 fs-6 text-white rounded-2">Blog</p>
-										</div>
+					<div class="blog-toolbar-search">
+						<form th:action="@{/blog_list}"
+							  method="get"
+							  class="blog-search-form"
+							  role="search">
+							<input type="hidden" name="pageNo" value="0">
+							<input type="hidden" name="pageSize" th:value="${pageSize}">
 
-										<img th:src="@{${#strings.isEmpty(post.image) ? '/images/default-image.jpg' : '/uploads/blog/thumbnail/' + post.image}}"
-											 class="img-fluid shadow-sm book-product-img blog-product-img"
-											 alt="blog item">
+							<input class="form-control"
+								   type="search"
+								   name="ch"
+								   th:value="${ch}"
+								   placeholder="Tìm kiếm bài viết"
+								   aria-label="Search">
 
-										<h6 class="mt-4 mb-0 fw-bold book-product-title blog-product-title">
-											[[${post.title}]]
-										</h6>
+							<button class="btn btn-primary"
+									type="submit"
+									aria-label="Tìm kiếm">
+								<svg class="search text-light" width="18" height="18">
+									<use xlink:href="#search"></use>
+								</svg>
+							</button>
+						</form>
+					</div>
+				</div>
 
-										<div class="review-content d-flex">
-											<p class="my-2 me-2 fs-6 text-black-50">
-												<span th:if="${!#strings.isEmpty(post.author)}" th:text="${post.author}">Tác giả</span>
-												<span th:unless="${!#strings.isEmpty(post.author)}">Bookly</span>
-											</p>
-										</div>
+				<div class="row g-4 blog-grid">
+					<th:block th:if="${posts != null and !posts.isEmpty()}">
+						<div class="col-xl-4 col-md-6" th:each="post : ${posts}">
+							<article class="blog-list-card">
+								<a th:href="@{/blog_list/{id}(id=${post.id})}"
+								   class="blog-list-image-wrap">
+									<span class="blog-list-badge">Blog</span>
 
-										<div class="review-content d-flex">
-											<p class="my-2 me-2 fs-6 text-black-50" th:text="${post.formattedCreatedAt}">
-												Ngày đăng
-											</p>
-										</div>
+									<img th:src="@{${#strings.isEmpty(post.image) ? '/images/default-image.jpg' : '/uploads/blog/thumbnail/' + post.image}}"
+										 th:alt="${post.title}"
+										 class="blog-list-image"
+										 loading="lazy">
+								</a>
+
+								<div class="blog-list-body">
+									<div class="blog-list-meta">
+										<span th:text="${post.formattedCreatedAt}">Ngày đăng</span>
+										<span>•</span>
+										<span th:if="${!#strings.isEmpty(post.author)}"
+											  th:text="${post.author}">
+											Tác giả
+										</span>
+										<span th:unless="${!#strings.isEmpty(post.author)}">Bookly</span>
+									</div>
+
+									<h3 class="blog-list-title">
+										<a th:href="@{/blog_list/{id}(id=${post.id})}"
+										   th:text="${post.title}">
+											Tiêu đề bài viết
+										</a>
+									</h3>
+
+									<a th:href="@{/blog_list/{id}(id=${post.id})}"
+									   class="blog-list-read-more">
+										Xem bài viết
 									</a>
 								</div>
+							</article>
+						</div>
+					</th:block>
+
+					<th:block th:unless="${posts != null and !posts.isEmpty()}">
+						<div class="col-12">
+							<div class="blog-empty-state">
+								<i class="fa-regular fa-newspaper"></i>
+								<h3>Không tìm thấy bài viết</h3>
+								<p>Hãy thử đổi từ khóa tìm kiếm hoặc quay lại danh sách blog.</p>
+								<a th:href="@{/blog_list}" class="btn btn-primary rounded-pill">
+									Xem tất cả bài viết
+								</a>
 							</div>
-						</th:block>
+						</div>
+					</th:block>
+				</div>
 
-						<th:block th:unless="${posts != null and !posts.isEmpty()}">
-							<div class="col-12">
-								<p class="fs-4 text-center mt-4 text-danger">Hiện chưa có bài viết nào</p>
-							</div>
-						</th:block>
-					</div>
+				<th:block th:if="${posts != null and !posts.isEmpty() and totalPages != null and totalPages > 1}">
+					<nav class="blog-pagination-wrap py-5"
+						 aria-label="Page navigation"
+						 th:with="currentPage=${pageNo + 1}">
+						<ul class="pagination justify-content-center gap-3" style="margin: 0;">
 
-
-					<nav class="py-5" aria-label="Page navigation" th:if="${totalPages != null and totalPages > 0}">
-						<ul class="pagination justify-content-center gap-2">
 							<li class="page-item" th:classappend="${isFirst} ? 'disabled' : ''">
 								<a class="page-link"
 								   th:href="@{/blog_list(pageNo=${pageNo - 1}, pageSize=${pageSize}, ch=${ch})}">
@@ -90,15 +148,95 @@
 								</a>
 							</li>
 
-							<li th:each="i : ${#numbers.sequence(1, totalPages)}"
-								class="page-item"
-								th:classappend="${pageNo + 1 == i} ? 'active' : ''"
-								th:attr="aria-current=${pageNo + 1 == i} ? 'page' : null">
-								<a class="page-link"
-								   th:href="@{/blog_list(pageNo=${i - 1}, pageSize=${pageSize}, ch=${ch})}">
-									[[${i}]]
-								</a>
-							</li>
+							<th:block th:if="${totalPages <= 7}">
+								<li class="page-item"
+									th:each="i : ${#numbers.sequence(1, totalPages)}"
+									th:classappend="${currentPage == i} ? 'active' : ''">
+									<a class="page-link"
+									   th:href="@{/blog_list(pageNo=${i - 1}, pageSize=${pageSize}, ch=${ch})}">
+										[[${i}]]
+									</a>
+								</li>
+							</th:block>
+
+							<th:block th:if="${totalPages > 7}">
+								<th:block th:if="${currentPage <= 3}">
+									<li class="page-item"
+										th:each="i : ${#numbers.sequence(1, 3)}"
+										th:classappend="${currentPage == i} ? 'active' : ''">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=${i - 1}, pageSize=${pageSize}, ch=${ch})}">
+											[[${i}]]
+										</a>
+									</li>
+
+									<li class="page-item disabled">
+										<span class="page-link">...</span>
+									</li>
+
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=${totalPages - 1}, pageSize=${pageSize}, ch=${ch})}">
+											[[${totalPages}]]
+										</a>
+									</li>
+								</th:block>
+
+								<th:block th:if="${currentPage > 3 and currentPage < totalPages - 2}">
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=0, pageSize=${pageSize}, ch=${ch})}">
+											1
+										</a>
+									</li>
+
+									<li class="page-item disabled">
+										<span class="page-link">...</span>
+									</li>
+
+									<li class="page-item"
+										th:each="i : ${#numbers.sequence(currentPage - 1, currentPage + 1)}"
+										th:classappend="${currentPage == i} ? 'active' : ''">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=${i - 1}, pageSize=${pageSize}, ch=${ch})}">
+											[[${i}]]
+										</a>
+									</li>
+
+									<li class="page-item disabled">
+										<span class="page-link">...</span>
+									</li>
+
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=${totalPages - 1}, pageSize=${pageSize}, ch=${ch})}">
+											[[${totalPages}]]
+										</a>
+									</li>
+								</th:block>
+
+								<th:block th:if="${currentPage >= totalPages - 2}">
+									<li class="page-item">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=0, pageSize=${pageSize}, ch=${ch})}">
+											1
+										</a>
+									</li>
+
+									<li class="page-item disabled">
+										<span class="page-link">...</span>
+									</li>
+
+									<li class="page-item"
+										th:each="i : ${#numbers.sequence(totalPages - 2, totalPages)}"
+										th:classappend="${currentPage == i} ? 'active' : ''">
+										<a class="page-link"
+										   th:href="@{/blog_list(pageNo=${i - 1}, pageSize=${pageSize}, ch=${ch})}">
+											[[${i}]]
+										</a>
+									</li>
+								</th:block>
+							</th:block>
 
 							<li class="page-item" th:classappend="${isLast} ? 'disabled' : ''">
 								<a class="page-link"
@@ -106,128 +244,13 @@
 									&raquo;
 								</a>
 							</li>
+
 						</ul>
 					</nav>
-				</main>
-
-				<aside class="col-md-3">
-					<div class="sidebar ps-lg-5">
-						<div class="widget-menu">
-							<div class="widget-search-bar">
-								<form th:action="@{/blog_list}"
-									  method="get"
-									  class="d-flex border rounded-3 p-2"
-									  role="search">
-									<input class="form-control border-0 me-2 py-2"
-										   type="search"
-										   name="ch"
-										   th:value="${ch}"
-										   placeholder="Tìm kiếm bài viết"
-										   aria-label="Search">
-									<button class="btn rounded-3 p-3 d-flex align-items-center" type="submit">
-										<svg class="search text-light" width="18" height="18">
-											<use xlink:href="#search"></use>
-										</svg>
-									</button>
-								</form>
-							</div>
-						</div>
-
-						<div class="widget-product-categories pt-5">
-							<img src="/images/banner-row.jpg"
-								 alt="Blog banner"
-								 class="img-fluid rounded-3"
-								 style="width: 100%; height: 500px; object-fit: cover;">
-						</div>
-					</div>
-				</aside>
-			</div>
+				</th:block>
+			</main>
 		</div>
 	</div>
-	<style>
-		.blog-product-card {
-			min-height: 390px;
-			text-align: center;
-		}
-
-		.blog-product-card:hover {
-			transform: translateY(-3px);
-			box-shadow: 0 12px 28px rgba(40, 32, 26, 0.08);
-		}
-
-		.blog-product-link {
-			color: inherit;
-			text-decoration: none;
-			display: block;
-		}
-
-		.blog-post-label {
-			top: 16px;
-			left: 16px;
-			z-index: 2;
-		}
-
-		.blog-post-label p {
-			margin: 0;
-			font-size: 0.82rem !important;
-		}
-
-		.blog-product-img {
-			width: 185px !important;
-			height: 185px !important;
-			object-fit: contain;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-			background: #f8f5f1;
-			padding: 8px;
-			border-radius: 6px;
-		}
-
-		.blog-product-title {
-			width: 175px;
-			min-height: 44px;
-			margin-left: auto;
-			margin-right: auto;
-			color: #252525;
-			line-height: 1.35;
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-		}
-
-		.blog-product-card .review-content {
-			justify-content: center;
-		}
-
-		.blog-read-action {
-			padding-top: 10px;
-		}
-
-		.blog-product-card:hover .blog-product-title {
-			color: #f76b73;
-		}
-
-		@media (max-width: 767px) {
-			.blog-product-card {
-				min-height: auto;
-			}
-
-			.blog-product-img {
-				width: 170px !important;
-				height: 170px !important;
-			}
-
-			.sidebar {
-				padding-left: 0 !important;
-			}
-
-			.widget-product-categories img {
-				height: auto !important;
-			}
-		}
-	</style>
 </section>
 </body>
 

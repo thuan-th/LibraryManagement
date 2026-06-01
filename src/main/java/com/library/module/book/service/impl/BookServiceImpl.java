@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.library.module.book.entity.Book;
 import com.library.module.book.repository.BookRepository;
 import com.library.module.book.service.BookService;
+import com.library.module.blog.util.BlogHtmlSanitizer;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -35,7 +36,7 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
 
     @Autowired
-    private FileStorageService fileStorageService;
+    private BlogHtmlSanitizer blogHtmlSanitizer;
 
     private static final String DEFAULT_BOOK_IMAGE = "default.jpg";
     private static final long MAX_BOOK_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -62,7 +63,7 @@ public class BookServiceImpl implements BookService {
 
         book.setBookName(book.getBookName().trim());
         book.setAuthor(book.getAuthor().trim());
-        book.setDescription(book.getDescription() == null ? "" : book.getDescription().trim());
+        book.setDescription(blogHtmlSanitizer.sanitize(book.getDescription()));
 
         Integer discountPercent = book.getDiscount() == null ? 0 : book.getDiscount();
         book.setDiscount(discountPercent);
@@ -145,7 +146,7 @@ public class BookServiceImpl implements BookService {
         }
 
         dbBook.setBookName(book.getBookName());
-        dbBook.setDescription(book.getDescription());
+        dbBook.setDescription(blogHtmlSanitizer.sanitize(book.getDescription()));
         dbBook.setAuthor(book.getAuthor());
         dbBook.setCategory(book.getCategory());
         dbBook.setPublisher(book.getPublisher());
